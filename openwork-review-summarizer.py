@@ -217,15 +217,19 @@ def scrape_reviews(session, m_id, logger, max_pages=15):
     return all_reviews
 
 
-def summarize_reviews(client, logger, company_name, company_intro, reviews):
+def summarize_reviews(
+    client, logger, model_name, company_name, company_intro, reviews, lang
+):
     """Generates a structured summary from a list of reviews using the OpenAI API.
 
     Args:
         client (OpenAI): The OpenAI client object.
         logger (logging.Logger): Logger instance for logging.
+        model_name (str): The OpenAI model name.
         company_name (str): Name of the company.
         company_intro (str): Introduction or description of the company.
         reviews (list of str): The textual content of the reviews.
+        lang (str): The language code ('ja', 'en', 'zh') for summarization.
 
     Returns:
         str: A summarized text of the given reviews with a specified format.
@@ -241,50 +245,93 @@ def summarize_reviews(client, logger, company_name, company_intro, reviews):
     content = "\n\n".join([f'"""\n{r}\n"""' for r in reviews])
     logger.info("Preparing to send data to OpenAI for summarization")
 
-    prompt = (
-        "遵循以下要求：\n"
-        "1. 不提及薪资水平。\n"
-        "2. 输出不使用markdown格式。\n"
-        "3. 聚焦以下内容：\n"
-        "   - 企业结构与文化特点\n"
-        "   - 工作与生活的平衡（WLB）\n"
-        "   - 工作意义与成长机会\n"
-        "   - 企业的主要强项与弱点\n"
-        "   - 适合加入的典型人群\n"
-        "   - 最多列出 3 条需要注意的“注意点”\n"
-        "4. 如果你了解公司的相关信息，可以适当补充简介。\n"
-        "5. 确保各部分内容逻辑一致，避免相互冲突。\n"
-        "6. 格式参考如下：\n"
-        "名称：描述\n"
-        "简介：描述\n"
-        "【企业文化】🎓\n描述\n"
-        "【WLB】⚖️\n描述\n"
-        "【成长机会】🌱\n描述\n"
-        "【强项与弱点】️💪\n- 强项：描述\n- 弱点：描述\n"
-        "【注意点】⚠️\n- 描述 (最多3点)\n"
-        "【适合人群】👥\n描述\n"
-        "【推荐指数】⭐ n/5\n结合用户偏好（重视WLB、倾向国际化业务和环境、专注IT软件领域、工作稳定不会被辞退且不频繁转移）"
-        "为该公司从5星中给出推荐指数并简要说明理由\n\n"
-        "根据上述要求，站在新毕业生求职者的角度，整合总结以下公司评价（每条用三引号包围）：\n\n"
-        f"名称: {company_name}\n"
-        f"简介: {company_intro}\n"
-        f"{content}"
+    instructions_by_language = {
+        "ja": (
+            "あなたは非常に経験豊富なキャリアアドバイザーです。"
+            "簡潔かつ洞察に富んだ要約を提供してください。"
+            "就職活動中の求職者が自信をもって判断できるように、"
+            "日本の職場レビューに基づいた有益な分析を行ってください。\n\n"
+            "以下の要件に従ってください：\n"
+            "1. 給与レベルは触れない。\n"
+            "2. Markdown形式は使用しない。\n"
+            "3. 必要に応じて会社の紹介文を補足できる。\n"
+            "4. 全体的に矛盾のない情報整理を行う。\n"
+            "5. 出力フォーマット例：\n"
+            "名称：説明\n"
+            "紹介：説明\n"
+            "【企業文化】\n説明\n"
+            "【WLB】\n説明\n"
+            "【成長機会】\n説明\n"
+            "【強みと弱点】\n- 強み: ...\n- 弱点: ...\n"
+            "【注意点】\n- ... (最大3点)\n"
+            "【適合する人材】\n...\n"
+            "【推薦指数】⭐ n/5\n\n 理由\n"
+            "6. 以下の企業評価は三重引用符で囲まれています。"
+            "すべてを統合し、**日本語**でわかりやすく要約してください。\n\n"
+        ),
+        "en": (
+            "You are a highly experienced career advisor. "
+            "Provide concise and insightful summaries based on workplace reviews. "
+            "Help job seekers make well-informed career decisions "
+            "by offering meaningful analysis.\n"
+            "Follow these requirements:\n"
+            "1. Do not mention specific salary levels.\n"
+            "2. Do not use Markdown formatting.\n"
+            "3. You may add a brief introduction of the company if appropriate.\n"
+            "4. Make sure the final summary is consistent and without conflicts.\n"
+            "5. Suggested format:\n"
+            "Name: ...\n"
+            "Introduction: ...\n"
+            "[Company Culture]\n...\n"
+            "[WLB]\n...\n"
+            "[Growth Opportunities]\n...\n"
+            "[Strengths & Weaknesses]\n- Strengths: ...\n- Weaknesses: ...\n"
+            "[Cautionary Points]\n- ... (up to 3)\n"
+            "[Suitable for]\n...\n"
+            "[Recommended Rating] ⭐ n/5\n\n Reason\n"
+            "6. Summarize Japanese company reviews (each in triple quotes) "
+            "in **English**.\n\n"
+        ),
+        "zh": (
+            "你是一位经验丰富的职业顾问。"
+            "基于工作场所评价提供简洁且富有洞察力的总结。"
+            "务必提供有价值的分析，帮助求职者在做出职业决策时更加自信且信息充分。\n"
+            "遵循以下要求:\n"
+            "1. 不提及具体薪资水平。\n"
+            "2. 不使用markdown格式。\n"
+            "3. 可以适当补充公司简介。\n"
+            "4. 保证总结内容逻辑一致。\n"
+            "5. 输出示例:\n"
+            "名称: ...\n"
+            "简介: ...\n"
+            "【企业文化】\n...\n"
+            "【WLB】\n...\n"
+            "【成长机会】\n...\n"
+            "【强项与弱点】\n- 强项: ...\n- 弱点: ...\n"
+            "【注意点】\n- ... (最多3点)\n"
+            "【适合人群】\n...\n"
+            "【推荐指数】⭐ n/5\n\n 原因\n"
+            "6. 使用**中文**对日语的企业评价进行总结（每条评价以三引号包裹）。\n\n"
+        ),
+    }
+
+    developer_content = instructions_by_language.get(
+        lang, instructions_by_language["ja"]
     )
+    developer_content += f"Name: {company_name}\nIntro: {company_intro}\n\n"
+    user_content = content
 
     try:
         response = client.chat.completions.create(
-            model=args.model_name,
+            model=model_name,
             messages=[
                 {
                     "role": "developer",
-                    "content": (
-                        "你是一位资深的职业顾问，擅长使用中文分析并总结日语的企业评价。"
-                        "你的目标是基于提供的评价内容，生成清晰、有条理、实用的总结，以帮助用户做出明智的求职决策。"
-                    ),
+                    "content": developer_content,
                 },
                 {
                     "role": "user",
-                    "content": prompt,
+                    "content": user_content,
                 },
             ],
             temperature=1.0,
@@ -375,6 +422,12 @@ def parse_args():
         default="gpt-4o",
         help="OpenAI model to use for summarization. 4o is recommended for this task.",
     )
+    parser.add_argument(
+        "--lang",
+        choices=["ja", "en", "zh"],
+        default="ja",
+        help="Language for the summary output. Choices: ja, en, zh.",
+    )
 
     return parser.parse_args()
 
@@ -443,9 +496,11 @@ if __name__ == "__main__":
                 summary = summarize_reviews(
                     client,
                     logger,
+                    args.model_name,
                     company_name,
                     company_intro,
                     [r["content"] for r in reviews],
+                    args.lang,
                 )
                 with open(summary_file, "w", encoding="utf-8") as f:
                     f.write(summary)
