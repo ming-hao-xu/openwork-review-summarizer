@@ -18,5 +18,5 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: "README.*"
+        exclude: "(README.*|CONTRIBUTING\\.md)"
       - id: end-of-file-fixer
