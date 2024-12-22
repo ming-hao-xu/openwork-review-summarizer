@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > English and Chinese versions are available in the [README_EN.md](README_EN.md) and [README_ZH.md](README_ZH.md).
-> This project is under development and may have bugs. Please report any issues you encounter.
+> Contributions are welcome, and check the [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 本ツールは、就活者が企業分析やスカウト判断を迅速に行えるように支援するためのものです。  
 具体的には、OpenWork の情報を用いて最近2年分の企業評価を自動で取得し、大規模言語モデル（LLM）を使ってこれらの評価を分析・要約します。

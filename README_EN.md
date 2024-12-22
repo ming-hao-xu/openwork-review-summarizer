@@ -2,7 +2,7 @@
 # OpenWork Review Summarizer
 
 > [!NOTE]
-> This project is under development and may have bugs. Please report any issues you encounter.
+> Contributions are welcome, and check the [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 This tool helps jobseekers quickly perform enterprise analyses and scout decisions.  
 It automatically uses your OpenWork account to retrieve up to two years of reviews and then employs large language models (LLM) to analyze and summarize those reviews.

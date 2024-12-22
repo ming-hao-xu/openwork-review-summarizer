@@ -1,7 +1,7 @@
 # OpenWork Review Summarizer
 
 > [!NOTE]
-> 该项目正在开发中，可能存在bug。请报告任何问题。
+> 欢迎贡献代码，详情请参阅 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 该工具可帮助求职者尤其是崩溃的留学生快速完成企业分析和筛选决策。  
 它会使用你的 OpenWork 账号来获取最近2年的企业评价数据，并通过大型语言模型（LLM）进行自动分析和总结。
