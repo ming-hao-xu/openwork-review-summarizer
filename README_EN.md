@@ -56,7 +56,7 @@ python openwork-review-summarizer.py --company-id=a09100000086PxW --lang=en
 ```
 
 - `--company-id`: Extract the `m_id` from the OpenWork URL.  
-  For example, in `https://www.openwork.jp/companies/a09100000086PxW`, the `m_id` is `a09100000086PxW`.
+  For example, in `https://www.openwork.jp/company.php?m_id=a09100000086PxW`, the `m_id` is `a09100000086PxW`.
 
 - `--lang`: Specify the output language as `ja` (Japanese), `en` (English), or `zh` (Chinese).
 

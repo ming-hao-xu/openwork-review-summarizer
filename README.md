@@ -57,7 +57,7 @@ python openwork-review-summarizer.py --company-id=a09100000086PxW  --lang=ja
 ```
 
 - `--company-id` には、OpenWorkのURLに含まれる `m_id` を指定します。
-  例えば、`https://www.openwork.jp/companies/a09100000086PxW` の場合、`a09100000086PxW` が `--company-id` になります。
+  例えば、`https://www.openwork.jp/company.php?m_id=a09100000086PxW` の場合、`a09100000086PxW` が `--company-id` になります。
 
 - `--lang` には、出力言語として ja(日本語) / en(英語) / zh(中国語) を指定できます。
 

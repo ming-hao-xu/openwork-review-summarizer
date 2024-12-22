@@ -55,7 +55,7 @@ python openwork-review-summarizer.py --company-id=a09100000086PxW --lang=zh
 ```
 
 - `--company-id`: 提取 OpenWork URL 中的 `m_id` 值。例如：  
-  `https://www.openwork.jp/companies/a09100000086PxW` 中的 `m_id` 为 `a09100000086PxW`。
+  `https://www.openwork.jp/company.php?m_id=a09100000086PxW` 中的 `m_id` 为 `a09100000086PxW`。
 
 - `--lang`: 指定输出语言为 `ja`（日语）、`en`（英语）或 `zh`（中文）。
 
