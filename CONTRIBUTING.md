@@ -11,15 +11,15 @@ Thank you for considering contributing to **OpenWork Review Summarizer**! This g
    .\venv\Scripts\activate   # For Windows
    ```
 
-2. Install dependencies:
-   - Production:
-     ```bash
-     pip install -r requirements.txt
-     ```
-   - Development:
-     ```bash
-     pip install -r dev-requirements.txt
-     ```
+2. Install dependencies:  
+   Production:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   Development:
+   ```bash
+   pip install -r dev/dev-requirements.txt
+   ```
 
 3. Install pre-commit hooks
    ```bash
