@@ -131,7 +131,7 @@ def get_company_info(session, m_id, logger):
     return company_name, company_intro
 
 
-def scrape_reviews(session, m_id, logger, max_pages=15):
+def scrape_reviews(session, m_id, logger, max_pages=12):
     """Scrapes reviews from OpenWork for a given company ID "
     "up to a page limit or 2-year cutoff.
 
@@ -487,7 +487,7 @@ if __name__ == "__main__":
                     logger.info("Skipping summary regeneration as per user choice.")
                     sys.exit(0)
 
-            reviews = scrape_reviews(session, company_id, logger, max_pages=15)
+            reviews = scrape_reviews(session, company_id, logger, max_pages=12)
             with open(reviews_file, "w", encoding="utf-8") as f:
                 json.dump(reviews, f, ensure_ascii=False, indent=2)
             logger.info(f"Saved {len(reviews)} reviews to {reviews_file}")
